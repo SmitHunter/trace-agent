@@ -1,0 +1,16 @@
+.git
+.github
+.next
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+**/.venv
+web/.next
+docs
+*.md
+!server/README.md
+.env
+.env.*
