@@ -177,6 +177,7 @@ The tool result is live Open-Meteo JSON (fields only; values change):
 cd server
 python3 -m ruff check .
 python3 -m ruff format --check .
+python3 -m mypy agent mcp_server api
 MCP_TRANSPORT=inprocess python3 -m pytest -v --tb=short
 
 # Web
@@ -226,6 +227,7 @@ trace-agent/
 ├── web/                    Next.js UI
 ├── mcp-config/             Example IDE MCP configs
 ├── docs/demo.png           Screenshot of a real demo-mode run
+├── docs/compare.png        City comparison with tool trace
 ├── Dockerfile
 ├── docker-compose.yml
 └── .github/workflows/ci.yml
