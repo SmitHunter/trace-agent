@@ -106,9 +106,7 @@ Streamable HTTP would be a better fit if the MCP server were a separate network 
 
 ## Quickstart
 
-(demo mode)
-
-Needs Python 3.11+ and Node.js 20+. No paid keys.
+Runs in demo mode: needs Python 3.11+ and Node.js 20+. No paid keys.
 
 ```bash
 git clone https://github.com/SmitHunter/trace-agent.git
@@ -121,14 +119,14 @@ cd ../web
 npm install
 ```
 
-Terminal 1: API:
+Terminal 1, API:
 
 ```bash
 cd server
 DEMO_MODE=true python3 -m uvicorn api.main:app --host 0.0.0.0 --port 8742 --reload
 ```
 
-Terminal 2: UI (proxies `/backend` to the API):
+Terminal 2, UI (proxies `/backend` to the API):
 
 ```bash
 cd web
