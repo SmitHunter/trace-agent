@@ -1,0 +1,3 @@
+# Security
+
+`npm audit --omit=dev` is clean. `npm audit` still reports 5 high findings on a **dev-only** chain: `eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces` ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) / CVE-2026-93687). Latest stable Next and `eslint-config-next` are already **16.3.8**; the 16.4 canaries still pin `fast-glob@3.3.1` and therefore `braces@3.0.3`. A patched `braces@3.0.4` is not on npm. `npm audit fix --force` would downgrade to `eslint-config-next@14.2.35`, which does not match Next 16. Left as-is: ESLint never sees untrusted brace patterns at runtime.

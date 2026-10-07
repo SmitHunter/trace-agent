@@ -3,7 +3,7 @@
 [![CI](https://github.com/SmitHunter/trace-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/SmitHunter/trace-agent/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A tool-using weather agent with a visible reasoning trace. Recruiters can run it in **demo mode** with no LLM key. The web agent is a real MCP client: it discovers tools with `list_tools` and runs them with `call_tool` against the same MCP server Claude Desktop and Cursor use.
+An MCP server plus an MCP-client agent, with a Next.js UI that traces every `tools/list` and `tools/call`. Runs in demo mode with no LLM key. The same weather server is what Claude Desktop and Cursor talk to over stdio.
 
 ![Trace Agent: conversation and tool trace](docs/demo.png)
 
@@ -189,7 +189,7 @@ npm run build
 
 GitHub Actions runs the same commands plus a Docker image build.
 
-`npm audit --omit=dev` is clean. `npm audit` still reports 5 high findings on a **dev-only** chain: `eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces` ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) / CVE-2026-93687). Latest stable Next and `eslint-config-next` are already **16.3.8**; the 16.4 canaries still pin `fast-glob@3.3.1` and therefore `braces@3.0.3`. A patched `braces@3.0.4` is not on npm. `npm audit fix --force` would downgrade to `eslint-config-next@14.2.35`, which does not match Next 16. Left as-is: ESLint never sees untrusted brace patterns at runtime.
+Dev-dependency audit notes: [SECURITY.md](SECURITY.md).
 
 ## Docker
 
@@ -228,6 +228,7 @@ trace-agent/
 ├── mcp-config/             Example IDE MCP configs
 ├── docs/demo.png           Screenshot of a real demo-mode run
 ├── docs/compare.png        City comparison with tool trace
+├── SECURITY.md             Dev-dependency audit notes
 ├── Dockerfile
 ├── docker-compose.yml
 └── .github/workflows/ci.yml
