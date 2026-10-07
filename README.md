@@ -1,17 +1,38 @@
-# Trace Agent
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/banner-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/brand/banner-light.svg">
+    <img alt="Trace Agent: an MCP server and MCP-client agent with a visible tool-call trace" src="docs/brand/banner-light.svg" width="100%">
+  </picture>
+</p>
 
-[![CI](https://img.shields.io/github/actions/workflow/status/SmitHunter/trace-agent/ci.yml?branch=main&style=flat&label=CI)](https://github.com/SmitHunter/trace-agent/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?style=flat)](https://github.com/SmitHunter/trace-agent/blob/main/server/pyproject.toml)
-[![Node](https://img.shields.io/badge/node-20%2B-339933?style=flat)](https://github.com/SmitHunter/trace-agent/blob/main/web/package.json)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat)](https://opensource.org/licenses/MIT)
+<p align="center">
+  <a href="https://github.com/SmitHunter/trace-agent/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/SmitHunter/trace-agent/ci.yml?branch=main&label=CI&style=flat"></a>
+  <a href="server/pyproject.toml"><img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-3776AB?style=flat"></a>
+  <a href="web/package.json"><img alt="Node 20+" src="https://img.shields.io/badge/node-20%2B-339933?style=flat"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-yellow?style=flat"></a>
+</p>
+
+<p align="center"><a href="#demo">Demo</a> · <a href="#quickstart">Quickstart</a> · <a href="#how-it-works">How it works</a> · <a href="#limitations">Limitations</a></p>
 
 An MCP server plus an MCP-client agent, with a Next.js UI that traces every `tools/list` and `tools/call`. Runs in demo mode with no LLM key. The same weather server is what Claude Desktop and Cursor talk to over stdio.
 
-![Demo mode: ask for Sydney weather, the MCP trace fills in, then tools/call metadata opens on the real JSON arguments](docs/demo-trace.gif)
+<p align="center">
+  <img alt="Demo mode: ask for Sydney weather, the MCP trace fills in, then tools/call metadata opens on the real JSON arguments" src="docs/demo-trace.gif" width="720">
+</p>
 
-Demo mode, no LLM key. The expanded Metadata panel is a real `tools/call` payload (`get_current_weather`, stdio, `{"city": "Sydney"}`). Tool Results shows the live Open-Meteo JSON; temperatures change with the weather.
+<p align="center"><sub>Demo mode, no LLM key · the expanded Metadata panel is a real <code>tools/call</code> payload · Tool Results is live Open-Meteo JSON</sub></p>
 
-![Trace Agent: city comparison with tool trace](docs/compare.png)
+> [!TIP]
+> Runs in demo mode with no LLM key. Tool results still come from live Open-Meteo data through MCP.
+
+## Demo
+
+<p align="center">
+  <img alt="City comparison: Sydney, Melbourne and Brisbane with the MCP tool trace" src="docs/compare.png" width="720">
+</p>
+
+<p align="center"><sub>City comparison: Sydney, Melbourne and Brisbane with the MCP tool trace</sub></p>
 
 ## Problem
 
@@ -27,7 +48,7 @@ Trace Agent makes that loop inspectable. Ask a multi-step question about Austral
 - Speaks MCP over stdio by default, the same transport Claude Desktop and Cursor use
 - Falls back to a scripted planner when no LLM key is set, while still calling Open-Meteo for real weather through MCP
 
-## Architecture
+## How it works
 
 ```mermaid
 flowchart LR
@@ -49,7 +70,9 @@ The web agent does **not** import the weather functions and call them in-process
 
 Streamable HTTP would be a better fit if the MCP server were a separate network service. Here the server is a local stdio process living next to the API, so stdio matches the IDE setup and avoids an extra HTTP listener.
 
-## Quick start (demo mode)
+## Quickstart
+
+(demo mode)
 
 Needs Python 3.11+ and Node.js 20+. No paid keys.
 
