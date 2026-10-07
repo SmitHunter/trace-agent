@@ -5,7 +5,9 @@
 
 An MCP server plus an MCP-client agent, with a Next.js UI that traces every `tools/list` and `tools/call`. Runs in demo mode with no LLM key. The same weather server is what Claude Desktop and Cursor talk to over stdio.
 
-![Trace Agent: conversation and tool trace](docs/demo.png)
+![Demo mode: ask for Sydney weather, the MCP trace fills in, then tools/call metadata opens on the real JSON arguments](docs/demo-trace.gif)
+
+Demo mode, no LLM key. The expanded Metadata panel is a real `tools/call` payload (`get_current_weather`, stdio, `{"city": "Sydney"}`). Tool Results shows the live Open-Meteo JSON; temperatures change with the weather.
 
 ![Trace Agent: city comparison with tool trace](docs/compare.png)
 
@@ -226,6 +228,7 @@ trace-agent/
 ├── server/                 Python: MCP server, agent, FastAPI, tests
 ├── web/                    Next.js UI
 ├── mcp-config/             Example IDE MCP configs
+├── docs/demo-trace.gif     Demo-mode GIF: ask, trace, expanded JSON
 ├── docs/demo.png           Screenshot of a real demo-mode run
 ├── docs/compare.png        City comparison with tool trace
 ├── SECURITY.md             Dev-dependency audit notes
