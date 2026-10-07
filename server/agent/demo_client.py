@@ -131,7 +131,7 @@ DEMO_SCENARIOS: dict[str, list[dict[str, Any]]] = {
     ],
 }
 
-DEFAULT_RESPONSE = {
+DEFAULT_RESPONSE: dict[str, Any] = {
     "tool_calls": [],
     "content": (
         "I'm a weather assistant for Australian cities. I can help you with:\n\n"
@@ -322,9 +322,9 @@ class DemoLLMClient(LLMClient):
                     break
 
             if not scenario_data:
-                for patterns in DEMO_SCENARIOS.get(self._current_scenario, []):
-                    scenario_data = patterns
-                    break
+                fallback = DEMO_SCENARIOS.get(self._current_scenario, [])
+                if fallback:
+                    scenario_data = fallback[0]
 
             if scenario_data:
                 idx = self._response_index.get(self._current_scenario, 0)
