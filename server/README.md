@@ -13,3 +13,6 @@ python3 -m mcp_server.server
 python3 -m pytest -v
 python3 -m ruff check .
 ```
+
+---
+Built by **Hunter Smith**, AI Engineer, Melbourne · [GitHub](https://github.com/SmitHunter) · [LinkedIn](https://www.linkedin.com/in/hunter-sm/)
