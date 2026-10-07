@@ -1,7 +1,9 @@
 # Trace Agent
 
-[![CI](https://github.com/SmitHunter/trace-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/SmitHunter/trace-agent/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://img.shields.io/github/actions/workflow/status/SmitHunter/trace-agent/ci.yml?branch=main&style=flat&label=CI)](https://github.com/SmitHunter/trace-agent/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?style=flat)](https://github.com/SmitHunter/trace-agent/blob/main/server/pyproject.toml)
+[![Node](https://img.shields.io/badge/node-20%2B-339933?style=flat)](https://github.com/SmitHunter/trace-agent/blob/main/web/package.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat)](https://opensource.org/licenses/MIT)
 
 An MCP server plus an MCP-client agent, with a Next.js UI that traces every `tools/list` and `tools/call`. Runs in demo mode with no LLM key. The same weather server is what Claude Desktop and Cursor talk to over stdio.
 
@@ -241,4 +243,5 @@ trace-agent/
 
 MIT. See [LICENSE](LICENSE).
 
-Built by **Hunter Smith** | [github.com/SmitHunter](https://github.com/SmitHunter)
+---
+Built by **Hunter Smith**, AI Engineer, Melbourne · [GitHub](https://github.com/SmitHunter) · [LinkedIn](https://www.linkedin.com/in/hunter-sm/)
