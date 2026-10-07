@@ -34,6 +34,35 @@ An MCP server plus an MCP-client agent, with a Next.js UI that traces every `too
 
 <p align="center"><sub>City comparison: Sydney, Melbourne and Brisbane with the MCP tool trace</sub></p>
 
+<details>
+<summary><b>Trace events for one question</b></summary>
+
+Asking "What's the weather in Sydney?" in demo mode produces a trace like this (timings vary):
+
+```text
+planning   Received user message: What's the weather in Sydney?
+planning   MCP tools/list: discovered 4 tools over stdio
+thinking   Iteration 1: Generating response
+tool_call  MCP tools/call get_current_weather  { "city": "Sydney" }
+tool_result MCP tools/call get_current_weather completed
+thinking   Iteration 2: Generating response
+```
+
+The trace panel labels those events with an **MCP** badge and the transport (`stdio` or `inprocess`).
+
+The tool result is live Open-Meteo JSON (fields only; values change):
+
+```json
+{
+  "city": "Sydney",
+  "temperature_celsius": 24.2,
+  "conditions": "Clear sky",
+  "is_daytime": true
+}
+```
+
+</details>
+
 ## Problem
 
 Most LLM demos hide the work. For weather questions that need live data, that is the interesting part: which tool ran, with which arguments, whether it failed, and how the answer was assembled.
@@ -66,9 +95,14 @@ flowchart LR
 
 The web agent does **not** import the weather functions and call them in-process. On startup, FastAPI opens one long-lived `McpSession`. Each chat turn discovers tools with MCP `tools/list` and invokes them with MCP `tools/call`.
 
+<details>
+<summary><b>Transport: stdio vs in-process</b></summary>
+
 **Transport:** `MCP_TRANSPORT=stdio` (default) spawns `python3 -m mcp_server.server` the same way Cursor and Claude Desktop do. That is the production path, including Docker. `MCP_TRANSPORT=inprocess` attaches the MCP Python client to the in-memory `MCPServer` with the JSON-RPC handshake still enabled (`mode="legacy"`). Pytest uses in-process for speed and still has a dedicated stdio round-trip test.
 
 Streamable HTTP would be a better fit if the MCP server were a separate network service. Here the server is a local stdio process living next to the API, so stdio matches the IDE setup and avoids an extra HTTP listener.
+
+</details>
 
 ## Quickstart
 
@@ -87,14 +121,14 @@ cd ../web
 npm install
 ```
 
-Terminal 1 — API:
+Terminal 1: API:
 
 ```bash
 cd server
 DEMO_MODE=true python3 -m uvicorn api.main:app --host 0.0.0.0 --port 8742 --reload
 ```
 
-Terminal 2 — UI (proxies `/backend` to the API):
+Terminal 2: UI (proxies `/backend` to the API):
 
 ```bash
 cd web
@@ -109,7 +143,7 @@ Open [http://localhost:3847](http://localhost:3847). Try:
 
 The UI should show **Demo Mode**. Tool results still come from live Open-Meteo data.
 
-## Live LLM mode
+### Live LLM mode
 
 Set one provider key and turn demo mode off:
 
@@ -122,13 +156,26 @@ python3 -m uvicorn api.main:app --host 0.0.0.0 --port 8742 --reload
 
 Keep the web command from above. The planner then uses the model; tool discovery and execution still go through MCP.
 
-## MCP server (Claude Desktop / Cursor)
+### Docker
+
+```bash
+docker compose up --build
+```
+
+Then open [http://localhost:3847](http://localhost:3847). The container starts the API on 8742 and the UI on 3847. The browser talks to `/backend` on the UI origin; Next.js proxies to the API.
+
+To use a real model in Docker, pass `DEMO_MODE=false` and your key in `docker-compose.yml` or the environment. Do not commit keys.
+
+## Use with Claude Desktop or Cursor
 
 From `server/`:
 
 ```bash
 python3 -m mcp_server.server
 ```
+
+<details>
+<summary><b>Claude Desktop config</b></summary>
 
 Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
@@ -144,6 +191,11 @@ Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json
 }
 ```
 
+</details>
+
+<details>
+<summary><b>Cursor config</b></summary>
+
 Cursor (workspace `.cursor/mcp.json`):
 
 ```json
@@ -158,6 +210,8 @@ Cursor (workspace `.cursor/mcp.json`):
 }
 ```
 
+</details>
+
 Example configs live in `mcp-config/`.
 
 ### Tools
@@ -171,33 +225,7 @@ Example configs live in `mcp-config/`.
 
 Supported cities: Adelaide, Brisbane, Canberra, Darwin, Gold Coast, Hobart, Melbourne, Newcastle, Perth, Sydney.
 
-## Example trace
-
-Asking "What's the weather in Sydney?" in demo mode produces a trace like this (timings vary):
-
-```
-planning   Received user message: What's the weather in Sydney?
-planning   MCP tools/list: discovered 4 tools over stdio
-thinking   Iteration 1: Generating response
-tool_call  MCP tools/call get_current_weather  { "city": "Sydney" }
-tool_result MCP tools/call get_current_weather completed
-thinking   Iteration 2: Generating response
-```
-
-The trace panel labels those events with an **MCP** badge and the transport (`stdio` or `inprocess`).
-
-The tool result is live Open-Meteo JSON (fields only; values change):
-
-```json
-{
-  "city": "Sydney",
-  "temperature_celsius": 24.2,
-  "conditions": "Clear sky",
-  "is_daytime": true
-}
-```
-
-## Tests and checks
+## Tests and CI
 
 ```bash
 # Python
@@ -217,16 +245,6 @@ npm run build
 GitHub Actions runs the same commands plus a Docker image build.
 
 Dev-dependency audit notes: [SECURITY.md](SECURITY.md).
-
-## Docker
-
-```bash
-docker compose up --build
-```
-
-Then open [http://localhost:3847](http://localhost:3847). The container starts the API on 8742 and the UI on 3847. The browser talks to `/backend` on the UI origin; Next.js proxies to the API.
-
-To use a real model in Docker, pass `DEMO_MODE=false` and your key in `docker-compose.yml` or the environment. Do not commit keys.
 
 ## Design decisions
 
@@ -248,19 +266,24 @@ To use a real model in Docker, pass `DEMO_MODE=false` and your key in `docker-co
 
 ## Project layout
 
-```
+<details>
+<summary><b>Tree</b></summary>
+
+```text
 trace-agent/
 ├── server/                 Python: MCP server, agent, FastAPI, tests
 ├── web/                    Next.js UI
 ├── mcp-config/             Example IDE MCP configs
+├── docs/brand/             Light and dark README banners
 ├── docs/demo-trace.gif     Demo-mode GIF: ask, trace, expanded JSON
-├── docs/demo.png           Screenshot of a real demo-mode run
 ├── docs/compare.png        City comparison with tool trace
 ├── SECURITY.md             Dev-dependency audit notes
 ├── Dockerfile
 ├── docker-compose.yml
 └── .github/workflows/ci.yml
 ```
+
+</details>
 
 ## License
 
