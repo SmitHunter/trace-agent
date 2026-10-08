@@ -98,7 +98,7 @@ The web agent does **not** import the weather functions and call them in-process
 <details>
 <summary><b>Transport: stdio vs in-process</b></summary>
 
-**Transport:** `MCP_TRANSPORT=stdio` (default) spawns `python3 -m mcp_server.server` the same way Cursor and Claude Desktop do. That is the production path, including Docker. `MCP_TRANSPORT=inprocess` attaches the MCP Python client to the in-memory `MCPServer` with the JSON-RPC handshake still enabled (`mode="legacy"`). Pytest uses in-process for speed and still has a dedicated stdio round-trip test.
+**Transport:** `MCP_TRANSPORT=stdio` (default) spawns `python3 -m mcp_server.server` the same way Cursor and Claude Desktop do. That is the default path, including Docker. `MCP_TRANSPORT=inprocess` attaches the MCP Python client to the in-memory `MCPServer` with the JSON-RPC handshake still enabled (`mode="legacy"`). Pytest uses in-process for speed and still has a dedicated stdio round-trip test.
 
 Streamable HTTP would be a better fit if the MCP server were a separate network service. Here the server is a local stdio process living next to the API, so stdio matches the IDE setup and avoids an extra HTTP listener.
 
@@ -111,6 +111,9 @@ Runs in demo mode: needs Python 3.11+ and Node.js 20+. No paid keys.
 ```bash
 git clone https://github.com/SmitHunter/trace-agent.git
 cd trace-agent
+
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
 cd server
 python3 -m pip install -e ".[dev]"
@@ -234,7 +237,7 @@ python3 -m mypy agent mcp_server api
 MCP_TRANSPORT=inprocess python3 -m pytest -v --tb=short
 
 # Web
-cd web
+cd ../web
 npm run lint
 npm run typecheck
 npm run build
@@ -246,7 +249,7 @@ Dev-dependency audit notes: [SECURITY.md](SECURITY.md).
 
 ## Design decisions
 
-- **Open-Meteo, not a paid weather API.** The demo has to run for a hiring manager with no account.
+- **Open-Meteo, not a paid weather API.** The demo has to run for anyone, with no account or API key.
 - **One MCP server, two clients.** The web agent, Claude Desktop, and Cursor all speak MCP to `mcp_server.server`. Weather logic lives in `mcp_server/tools.py` so the server has a single implementation.
 - **Stdio by default.** Same JSON-RPC transport as the IDE configs in `mcp-config/`. In-process is a test shortcut, not a second tool runtime.
 - **Demo planner, live tools.** Scripted tool *selection* so the UI works without a model bill. The weather payload still arrives through MCP `tools/call` from Open-Meteo.
